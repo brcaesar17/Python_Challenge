@@ -1,0 +1,8 @@
+results
+.....................
+('The greatest increase is:', 1862002)
+('The greatest decrease is:', -1825558)
+('The average change is:', -8311.105882352942)
+('The greatest increase is:', 'Aug-16', 1862002)
+('The greatest decrease is:', 'Feb-14', -1825558)
+...............................
