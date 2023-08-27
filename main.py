@@ -73,3 +73,5 @@ with open (election_data, encoding='UTF-8' ) as file: # open the csv file in ord
 
 
         
+
+
