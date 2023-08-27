@@ -1,77 +1,81 @@
-import csv # import library to read external csv file 
-import os # import library to dynamically access the file location on various operating systems
+import os # import the os library to dynamically access the csv file over various operating systems 
+import csv # import csv library to access and external csv file 
 
-overall = 0 # variable counter to store overall number of csv file rows ( overall number of votes)
+# Construct the path to the CSV file using os.path.join
+file_path = os.path.join("Resources", "budget_data.csv")
+Exp_Pybank = os.path.join ("analysis", "Results_PyBank.txt")
 
-candidates_list = [] #  to store names of candidates  (three candidates)
+# variable to store list of profit / losses
+Profit = [] # list to store profit / olossess values 
 
-percent_vote = []
+deviation = [] # the diffirence between profit/ losses month by month
 
-votes_number = [] # list to store the number of votes for each candidate
+dates = []# list to store months / dates of the profit/loss values 
 
 
+# initial value of counter
+count = 0
 
-election_data = os.path.join('Resources', 'election_data.csv')
-# define the csv file path and access its location 
-#election_data = 'Resources/election_data.csv'
+# variable to store total profit / losses
+TotalValue = 0
 
-with open (election_data, encoding='UTF-8' ) as file: # open the csv file in order read it row by row
-    
-    election_reader = csv.reader(file, delimiter =',') # read the file taking into condideration the ',' will distinguish between the column and the dubsequent one
+#variable to store  change in profit / losses
+greatest = 0
+decrease = 0
 
-    election_header = next(election_reader) # read the header of the file , and skip it in case not available
+total_changes = 0
+# Print the constructed file path
+print(file_path)
 
-    for row in election_reader: # looping the election file in order to answer the questions
-        overall += 1 # counter to show how many votes overall for all candidates 
+# Open and read the CSV file
+with open(file_path) as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=",")
 
-        if row[2] not in candidates_list:# if the name of the candidate not exist within the candidate list add it 
-            candidates_list.append(row[2]) # add the candidate name into the list      
-            options = candidates_list.index(row[2]) # options is a variable to store the first occurr of candidate name
-            votes_number.append(1)  # add the number one to each row of list to count votes of each candidate       
-        else:
-            options = candidates_list.index(row[2])# assign the locatoin of each candidate name in the list to variable options
-            votes_number[options] += 1 # counter will give us the total number of votes for each candidate
-    
-    
-
-    print(' Election Results:')       
-    print('......................')
-
-    print(' total votes:', overall )
-    print('......................')
-
-    #print(votes_number)
-    #print('......................')
-                   
-    for i in votes_number: # looping the votes_number list which contains total numbers of each candidates to calculate the percentage and define the winner
-        percentage = (i/overall) 
-        #percentage = round(percentage)
-        percentage = f"{percentage:.2%}"
-        percent_vote.append(percentage)# list to store the percentages of each candidate votes 
-        winner = max(votes_number)# maximum number of votes 
-        index = votes_number.index(winner)
-        winning_candidate = candidates_list[index]
-  
-    #print('winner votes number',winner)
-    #print('percentage of voting ',percent_vote)
-    for i in range (len(candidates_list)):
-        print(f"{candidates_list[i]}:{str(percent_vote[i])}: {str(votes_number[i])}")
-        print('.........................................')
-    print ('winning candidate: ', winning_candidate)
-
-   
+ # Read the header row first (skip this part if there is no header)
+    csv_header = next(csv_file)
+    print(f"Header: {csv_header}")
+    # At this point, csv_reader is a generator that iterates through the rows of the CSV file
+    # You can iterate through the rows using a loop
+    for row in csv_reader:
+        TotalValue = TotalValue + int(row[1])
+        Profit.append (int(row[1]))
+        dates.append(row[0])
+        count += 1
         
-   
+    print('Financial Analysis')
+    print('...........................')
+    print('the total number of Months is', count)
+    print('Total value of the profit / loss is',TotalValue)
+    #average will be outside for loop and it will be sum of profit divided over len of prof/loss
+    #print('Total Months',len(Profit[row])-1)
+for i in range(len(Profit) - 1):
+    dif = int(Profit[i+1]) - int(Profit[i]) # the diffirence in profit/loss between a month and susequnt one 
+    deviation.append(dif)# assign the diffirence to a new list 
+    if dif > greatest:
+        greatest = dif # calculate the maximum diffirence or change in value 
+    if dif < decrease:
+        decrease = dif # calculate the minimum diffirence or change in value 
+    total_changes += dif# calculate the total changes for changes month by month
+average_change = total_changes / (len(Profit)-1) #  calulate the average of changes 
 
-      
-                       
-             
-             
-            
-            
+date_max = dates[deviation.index(max(deviation))+1]# assign the month of maximum change by using index method to the variable date_max
+date_min = dates[deviation.index(min(deviation))+1]# assign the month of minimum change by using index method to the variable date_min
+#print("The average change is:", average_change)
+#print(f"The greatest increase is: {date_max} ({greatest}) ")
+#print(f"The greatest decrease is: {date_min} ({decrease}) ")
+results = f'''results
+.....................
+{("The greatest increase is:", greatest)}
+{("The greatest decrease is:", decrease)}
+{("The average change is:", average_change)}
+{("The greatest increase is:", date_max, greatest)}
+{("The greatest decrease is:", date_min, decrease)}
+...............................'''
+print(results)
+with open(Exp_Pybank,'w') as txtfile:  
+     txtfile.write(results)
+#print("The greatest increase is:", greatest)
+#print("The greatest decrease is:", decrease)
 
-
-
-        
 
 
